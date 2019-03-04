@@ -72,6 +72,7 @@ endif()
 
 add_executable(JitFromScratch
   main.cpp
+  JitFromScratch.cpp
 )
 
 target_include_directories(JitFromScratch PRIVATE
@@ -82,7 +83,10 @@ target_include_directories(JitFromScratch PRIVATE
 # Resolve static libraries from component names.
 llvm_map_components_to_libnames(llvm_libs
   core
+  executionengine
   native
+  orcjit
+  runtimedyld
   support
 )
 
