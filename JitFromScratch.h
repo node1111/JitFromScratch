@@ -35,5 +35,10 @@ public:
   }
 
 private:
+  llvm::orc::JITDylib::GeneratorFunction HostProcessResolver;
+
+  llvm::orc::JITDylib::GeneratorFunction
+  createHostProcessResolver(llvm::DataLayout DL);
+
   llvm::Expected<llvm::JITTargetAddress> getFunctionAddr(llvm::StringRef Name);
 };
