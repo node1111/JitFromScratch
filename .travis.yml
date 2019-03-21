@@ -1,0 +1,8 @@
+dist: xenial
+
+services:
+  - docker
+
+script:
+  - docker pull weliveindetail/jitfromscratch:test-debug
+  - docker run -e CHECKOUT=$(git rev-parse HEAD) weliveindetail/jitfromscratch:test-debug
