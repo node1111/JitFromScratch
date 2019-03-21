@@ -25,7 +25,8 @@ if(LLVM_DIR)
 else()
   message(WARNING
 "No explicit LLVM_DIR provided. If find_package() fails, pass "
-"-DLLVM_DIR=/path/to/llvm-build/lib/cmake/llvm to CMake.")
+"-DLLVM_DIR=/path/to/llvm-build/lib/cmake/llvm to CMake (or if "
+"using vscode, edit .vscode/cmake-variants.json respectively.")
 endif()
 
 find_package(LLVM 8.0 REQUIRED)
@@ -39,6 +40,16 @@ else()
 endif()
 
 message(STATUS "Build type: ${LLVM_BUILD_TYPE}")
+
+# If requested, install the vscode configuration template in source folder
+if(JFS_CONFIGURE_VSCODE)
+  configure_file(${CMAKE_SOURCE_DIR}/.vscode/template/cmake-variants.json.in
+                 ${CMAKE_SOURCE_DIR}/.vscode/cmake-variants.json @ONLY)
+  set(JFS_CONFIGURE_VSCODE OFF CACHE BOOL "" FORCE)
+  message(STATUS
+"Successfully configured '${CMAKE_SOURCE_DIR}/.vscode/cmake-variants.json' for "
+"LLVM_DIR '${LLVM_DIR}'. Open '${CMAKE_SOURCE_DIR}' in Visual Studio Code to use it.")
+endif()
 
 if(LLVM_ENABLE_RTTI)
   message(WARNING "LLVM built with RTTI; enabling it for JitFromScratch to avoid quirks")
