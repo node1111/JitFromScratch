@@ -1,0 +1,26 @@
+dist: xenial
+sudo: true
+language: c++
+compiler: gcc
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-xenial-8
+    packages:
+    - cmake
+    - cmake-data
+    - llvm-8
+    - llvm-8-dev
+    - ninja-build
+
+script:
+    - mkdir build
+    - pushd build
+    - cmake -GNinja -DLLVM_DIR="/usr/lib/llvm-8.0/lib/cmake/llvm/" ..
+    - ninja JitFromScratch -v
+    - ninja run -v
+    - ninja check -v
+    - popd
+
