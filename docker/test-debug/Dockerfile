@@ -1,11 +1,11 @@
 # JitFromScratch docker image for running lit tests
 #
-# The image ships a prebuilt release version of LLVM 8 and a checkout of the
+# The image ships a prebuilt debug version of LLVM 8 and a checkout of the
 # JitFromScratch sources. By default the container will run the tests on a
 # build from the llvm80/jit-basics branch. Passing values for the environment
 # variables REMOTE and CHECKOUT allows to test arbitrary forks and/or revisions.
 #
-#   $ docker build -t <image-name> /path/to/JitFromScratch/docker/test
+#   $ docker build -t <image-name> /path/to/JitFromScratch/docker/test-debug
 #   $ docker run -e REMOTE=<repo> -e CHECKOUT=<commit> <image-name>
 #
 FROM ubuntu:18.04
@@ -18,21 +18,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Checkout and configure LLVM
 RUN git clone --depth=1 --branch=release/8.x https://github.com/llvm/llvm-project.git llvm-release80
-RUN mkdir llvm-release80-release && \
-    cd llvm-release80-release && \
+RUN mkdir llvm-release80-debug && \
+    cd llvm-release80-debug && \
     CC=clang CXX=clang++ \
-        cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=host ../llvm-release80/llvm
+        cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DLLVM_TARGETS_TO_BUILD=host ../llvm-release80/llvm
 
 # Distribute libraries accross separate layers to limit the number of lost
 # artifacts if docker-build runs out of memory. The list is obtained from:
 # llvm-config --libnames core executionengine native orcjit runtimedyld support
-RUN cd llvm-release80-release && ninja llvm-config FileCheck
-RUN cd llvm-release80-release && ninja LLVMSupport LLVMDemangle LLVMCore LLVMBinaryFormat
-RUN cd llvm-release80-release && ninja LLVMRuntimeDyld LLVMObject LLVMMCParser LLVMBitReader LLVMMC LLVMDebugInfoCodeView LLVMDebugInfoMSF
-RUN cd llvm-release80-release && ninja LLVMExecutionEngine LLVMTarget LLVMAnalysis LLVMProfileData LLVMOrcJIT LLVMTransformUtils
-RUN cd llvm-release80-release && ninja LLVMGlobalISel LLVMSelectionDAG LLVMScalarOpts LLVMInstCombine LLVMAggressiveInstCombine
-RUN cd llvm-release80-release && ninja LLVMAsmPrinter LLVMCodeGen LLVMMCDisassembler LLVMBitWriter LLVMBinaryFormat
-RUN cd llvm-release80-release && ninja LLVMX86AsmPrinter LLVMX86CodeGen LLVMX86Disassembler LLVMX86AsmParser LLVMX86Desc LLVMX86Info LLVMX86Utils
+RUN cd llvm-release80-debug && ninja llvm-config FileCheck
+RUN cd llvm-release80-debug && ninja LLVMSupport LLVMDemangle LLVMCore LLVMBinaryFormat
+RUN cd llvm-release80-debug && ninja LLVMRuntimeDyld LLVMObject LLVMMCParser LLVMBitReader LLVMMC LLVMDebugInfoCodeView LLVMDebugInfoMSF
+RUN cd llvm-release80-debug && ninja LLVMExecutionEngine LLVMTarget LLVMAnalysis LLVMProfileData LLVMOrcJIT LLVMTransformUtils
+RUN cd llvm-release80-debug && ninja LLVMGlobalISel LLVMSelectionDAG LLVMScalarOpts LLVMInstCombine LLVMAggressiveInstCombine
+RUN cd llvm-release80-debug && ninja LLVMAsmPrinter LLVMCodeGen LLVMMCDisassembler LLVMBitWriter LLVMBinaryFormat
+RUN cd llvm-release80-debug && ninja LLVMX86AsmPrinter LLVMX86CodeGen LLVMX86Disassembler LLVMX86AsmParser LLVMX86Desc LLVMX86Info LLVMX86Utils
 
 # Checkout JitFromScratch
 RUN git clone https://github.com/weliveindetail/JitFromScratch.git jitfromscratch && \
@@ -50,5 +50,5 @@ CMD set -x && \
     git log -1 -s && \
     cd ../build && \
     CC=clang CXX=clang++ \
-        cmake -GNinja -DLLVM_DIR=/llvm-release80-release/lib/cmake/llvm ../jitfromscratch && \
+        cmake -GNinja -DLLVM_DIR=/llvm-release80-debug/lib/cmake/llvm ../jitfromscratch && \
     ninja check
