@@ -29,7 +29,8 @@ public:
   JitFromScratch &operator=(JitFromScratch &&) = delete;
 
   llvm::Error submitModule(std::unique_ptr<llvm::Module> M,
-                           std::unique_ptr<llvm::LLVMContext> C);
+                           std::unique_ptr<llvm::LLVMContext> C,
+                           unsigned OptLevel);
 
   template <class Signature_t>
   llvm::Expected<std::function<Signature_t>> getFunction(llvm::StringRef Name) {
@@ -44,6 +45,7 @@ private:
   std::unique_ptr<llvm::orc::ExecutionSession> ES;
   std::unique_ptr<llvm::TargetMachine> TM;
 
+  llvm::orc::IRTransformLayer OptimizeLayer;
   llvm::orc::IRCompileLayer CompileLayer;
   llvm::orc::RTDyldObjectLinkingLayer ObjLinkingLayer;
 

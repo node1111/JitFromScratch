@@ -24,16 +24,46 @@ namespace {
     std::shared_ptr<llvm::TargetMachine> TM;
   };
 
+  class OptFtor {
+  public:
+    OptFtor(unsigned OptLevel) { B.OptLevel = OptLevel; }
+
+    llvm::Expected<llvm::orc::ThreadSafeModule>
+    operator()(llvm::orc::ThreadSafeModule TSM,
+              const llvm::orc::MaterializationResponsibility &) {
+      llvm::Module &M = *TSM.getModule();
+
+      llvm::legacy::FunctionPassManager FPM(&M);
+      B.populateFunctionPassManager(FPM);
+
+      FPM.doInitialization();
+      for (llvm::Function &F : M)
+        FPM.run(F);
+      FPM.doFinalization();
+
+      llvm::legacy::PassManager MPM;
+      B.populateModulePassManager(MPM);
+      MPM.run(M);
+
+      LLVM_DEBUG(llvm::dbgs() << "Optimized IR module:\n\n" << M << "\n\n");
+
+      return TSM;
+    }
+
+  private:
+    llvm::PassManagerBuilder B;
+  };
+
 } // end anonymous namespace
 
 using namespace llvm;
 using namespace llvm::orc;
-using namespace std::placeholders;
 
 JitFromScratch::JitFromScratch(std::unique_ptr<TargetMachine> TM)
     : ES(std::make_unique<ExecutionSession>()), TM(std::move(TM)),
       ObjLinkingLayer(*ES, createMemoryManagerFtor()),
-      CompileLayer(*ES, ObjLinkingLayer, SimpleCompiler(*this->TM)) {
+      CompileLayer(*ES, ObjLinkingLayer, SimpleCompiler(*this->TM)),
+      OptimizeLayer(*ES, CompileLayer) {
   if (auto R = createHostProcessResolver())
     ES->getMainJITDylib().setGenerator(std::move(R));
 }
@@ -91,15 +121,18 @@ Error JitFromScratch::applyDataLayout(Module &M) {
 }
 
 Error JitFromScratch::submitModule(std::unique_ptr<Module> M,
-                                   std::unique_ptr<LLVMContext> C) {
+                                   std::unique_ptr<LLVMContext> C,
+                                   unsigned OptLevel) {
   LLVM_DEBUG(dbgs() << "Submit IR module:\n\n" << *M << "\n\n");
 
   if (auto Err = applyDataLayout(*M))
     return Err;
 
-  return CompileLayer.add(ES->getMainJITDylib(),
-                          ThreadSafeModule(std::move(M), std::move(C)),
-                          ES->allocateVModule());
+  OptimizeLayer.setTransform(OptFtor(OptLevel));
+
+  return OptimizeLayer.add(ES->getMainJITDylib(),
+                           ThreadSafeModule(std::move(M), std::move(C)),
+                           ES->allocateVModule());
 }
 
 Expected<JITTargetAddress> JitFromScratch::getFunctionAddr(StringRef Name) {
