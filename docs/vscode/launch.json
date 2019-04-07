@@ -10,7 +10,7 @@
       "request": "launch",
       "target": "${workspaceRoot}/build/JitFromScratch",
       "arguments": "-debug -debug-only=jitfromscratch",
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/build",
       "valuesFormatting": "prettyPrinters"
     },
     {
@@ -20,7 +20,7 @@
       "executable": "${workspaceRoot}/build/JitFromScratch",
       "target": ":9999",
       "remote": true,
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/build",
       "valuesFormatting": "parseText"
     }
   ]
