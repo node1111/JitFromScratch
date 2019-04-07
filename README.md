@@ -1,11 +1,13 @@
 # JitFromScratch
 
+[![Build Status](https://travis-ci.org/weliveindetail/JitFromScratch.svg?branch=master)](https://travis-ci.org/weliveindetail/JitFromScratch/branches/)
+
 Collection of examples from my talks in the [LLVM Social Berlin](https://www.meetup.com/de-DE/LLVM-Social-Berlin/) and [C++ User Group Berlin](https://www.meetup.com/de-DE/berlincplusplus/) that implement various aspects of a JIT compiler based on the LLVM Orc libraries.
 
 ## Contribute
 
 The repository follows a perfect history policy to foster traceability and understanding. If you find a bug or want to submit an improvement, please send a pull request against the [respective step](
-https://github.com/weliveindetail/JitFromScratch/branches/all?query=steps).
+https://github.com/weliveindetail/JitFromScratch/branches/all?query=step).
 
 ## Structure
 
@@ -25,25 +27,33 @@ int *integerDistances(const int (&x)[sizeOfArray], int *y) {
 }
 ```
 
-This is achieved in a series of self-contained steps:
+## Steps
 
-0. [Add sources with original integerDistances function](https://github.com/weliveindetail/JitFromScratch/tree/step/A00)
-1. [Add Dockerfiles and TravisCI config](https://github.com/weliveindetail/JitFromScratch/tree/step/A01)
-2. [Add lit tests](https://github.com/weliveindetail/JitFromScratch/tree/step/A02)
-3. [Initialize LLVM for native target codegen](https://github.com/weliveindetail/JitFromScratch/tree/step/A03)
-4. [Add minimal JIT compiler based on LLJIT](https://github.com/weliveindetail/JitFromScratch/tree/step/A04)
-5. [Create empty module and pass it to the JIT](https://github.com/weliveindetail/JitFromScratch/tree/step/A05)
-6. [In debug mode dump extra info when passing -debug -debug-only=jitfromscratch](https://github.com/weliveindetail/JitFromScratch/tree/step/A06)
-7. [Generate function that takes two ints and returns zero](https://github.com/weliveindetail/JitFromScratch/tree/step/A07)
-8. [Add basic sanity checks for IR code](https://github.com/weliveindetail/JitFromScratch/tree/step/A08)
-9. [Request and run trivial function](https://github.com/weliveindetail/JitFromScratch/tree/step/A09)
-10. [Emit IR code for substraction and use it in the integerDistances function](https://github.com/weliveindetail/JitFromScratch/tree/step/A10)
-11. [Emit variable names to make IR more readable](https://github.com/weliveindetail/JitFromScratch/tree/step/A11)
-12. [Allow symbol resolution from the host process](https://github.com/weliveindetail/JitFromScratch/tree/step/A12)
-13. [Emit call to stdlib function abs in JITed code](https://github.com/weliveindetail/JitFromScratch/tree/step/A13)
-14. [Emit unrolled loop in JITed code](https://github.com/weliveindetail/JitFromScratch/tree/step/A14)
-15. [Emit call to allocator in JITed code](https://github.com/weliveindetail/JitFromScratch/tree/step/A15)
-16. [Remove wrapper function and call JITed code directly](https://github.com/weliveindetail/JitFromScratch/tree/step/A16)
+The example project is built in a series of self-contained steps:
+
+0. [Add sources with original integerDistances function](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A00)
+1. [Add lit tests](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A01)
+2. [Add Dockerfiles to run typical use-cases on Ubuntu 18.04](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A02)
+3. [Add TravisCI config for test-debug docker](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A03)
+4. [Initialize LLVM for native target codegen](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A04)
+5. [Add minimal JIT compiler based on LLJIT](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A05)
+6. [Create empty module and pass it to the JIT](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A06)
+7. [In debug mode dump extra info when passing -debug -debug-only=jitfromscratch](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A07)
+8. [Generate function that takes two ints and returns zero](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A08)
+9. [Add basic sanity checks for IR code](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A09)
+10. [Request and run trivial function](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A10)
+11. [Emit IR code for substraction and use it in the integerDistances function](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A11)
+12. [Emit variable names to make IR more readable](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A12)
+13. [Allow symbol resolution from the host process](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A13)
+14. [Emit call to stdlib function abs in JITed code](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A14)
+15. [Emit unrolled loop in JITed code](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A15)
+16. [Emit call to allocator in JITed code](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A16)
+17. [Remove wrapper function and call JITed code directly](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A17)
+18. [Break free from LLJIT](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A18)
+19. [Implement GDB JIT interface](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A19)
+20. [Add optimization passes controlled via -Ox command line flag](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A20)
+21. [Simple name-based object cache](https://github.com/weliveindetail/JitFromScratch/tree/llvm80/step/A21)
+
 
 ## Build and run locally
 
