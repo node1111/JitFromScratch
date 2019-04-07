@@ -1,11 +1,18 @@
 # JitFromScratch
 
-Collection of examples from my talks in the LLVM Social Berlin and C++ User Group Berlin that showcase techniques for implementing various aspects of a JIT compiler based on the LLVM Orc libraries.
+Collection of examples from my talks in the [LLVM Social Berlin](https://www.meetup.com/de-DE/LLVM-Social-Berlin/) and [C++ User Group Berlin](https://www.meetup.com/de-DE/berlincplusplus/) that implement various aspects of a JIT compiler based on the LLVM Orc libraries.
 
 ## Build and debug with vscode
 
-Using the [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), [ 	
-CMake Tools](https://marketplace.visualstudio.com/items?itemName=vector-of-bool.cmake-tools) and [Native Debug](https://marketplace.visualstudio.com/items?itemName=webfreak.debug) extensions and these configuration files, you should be ready to go. Make sure to enter your actual `LLVM_DIR`.
+* download, install and open [Visual Studio Code](https://code.visualstudio.com/download)
+* press `Cmd + Shift + P`; type and run `Shell Command: Install 'code' command in PATH`
+* install extensions [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), [
+CMake Tools](https://marketplace.visualstudio.com/items?itemName=vector-of-bool.cmake-tools) and [Native Debug](https://marketplace.visualstudio.com/items?itemName=webfreak.debug)
+* checkout sources: `git clone https://github.com/weliveindetail/JitFromScratch jitfromscratch`
+* copy the below configuration files into the `.vscode` folder: `cp -R jitfromscratch/docs/vscode/*.json jitfromscratch/.vscode/`
+* enter your actual `LLVM_DIR` in `jitfromscratch/.vscode/cmake-variants.json`
+* open the `jitfromscratch` folder in vscode `code .`
+* if it doesn't start automatically, press `Cmd + Shift + P`; type and run `CMake: Scan for Kits`
 
 ### .vscode/settings.json
 ```

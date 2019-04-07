@@ -47,8 +47,6 @@ This is achieved in a series of self-contained steps:
 
 ## Build and run locally
 
-The project was tested on Ubuntu 18.04, macOS 10.14 and Windows 10. Please find examples for commands and expected output on [Travis CI](https://travis-ci.org/weliveindetail/JitFromScratch). This should get you started:
-
 ```
 $ git clone https://github.com/weliveindetail/JitFromScratch jitfromscratch
 $ mkdir build && cd build
@@ -56,6 +54,7 @@ $ cmake -GNinja -DLLVM_DIR=/path/to/llvm-build/lib/cmake/llvm ../jitfromscratch
 $ ninja JitFromScratch
 $ ./JitFromScratch -debug -debug-only=jitfromscratch
 ```
+The project was tested on Ubuntu 18.04, macOS 10.14 and Windows 10. Please find real-world examples for commands and expected output on [Travis CI](https://travis-ci.org/weliveindetail/JitFromScratch).
 
 ## Build and run in docker
 
@@ -63,12 +62,16 @@ Docker images with prebuilt variants of LLVM can be pulled from [dockerhub](http
 
 ## Build and debug from vscode
 
-Using the [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), [ 	
-CMake Tools](https://marketplace.visualstudio.com/items?itemName=vector-of-bool.cmake-tools) and [Native Debug](https://marketplace.visualstudio.com/items?itemName=webfreak.debug) extensions and the configuration files in [docs/vscode/](https://github.com/weliveindetail/JitFromScratch/tree/master/docs/vscode), you should be ready to go.
+Install the [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), [
+CMake Tools](https://marketplace.visualstudio.com/items?itemName=vector-of-bool.cmake-tools) and [Native Debug](https://marketplace.visualstudio.com/items?itemName=webfreak.debug) extensions and apply the configuration files in [docs/vscode/](https://github.com/weliveindetail/JitFromScratch/tree/master/docs/vscode).
 
 ## Previous Versions
 
-I try to keep modifications on the examples minimal when porting to a newer version of LLVM. This allows to [diff for API changes](https://github.com/weliveindetail/JitFromScratch/tree/master/llvm50#previous-versions) and see how they affect individual steps. In LLVM 8, however, the Orc library was almost entirely rewritten and I used the opportunity to also refine my examples. You can still find the old examples here:
+I try to keep modifications on the examples minimal when porting to a newer version of LLVM. This allows to [diff for API changes](https://github.com/weliveindetail/JitFromScratch/tree/master/llvm50#previous-versions) and see how they affect individual steps.
+
+In LLVM 8, however, the Orc library was almost entirely rewritten and I used the opportunity to also refine my examples.
+
+You can still find the old examples here:
 
 * [LLVM 5.0](https://github.com/weliveindetail/JitFromScratch/tree/master/llvm50)
 * [LLVM 4.0](https://github.com/weliveindetail/JitFromScratch/tree/master/llvm40)
