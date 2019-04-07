@@ -33,6 +33,7 @@ RUN cd llvm-release80-debug && ninja LLVMExecutionEngine LLVMTarget LLVMAnalysis
 RUN cd llvm-release80-debug && ninja LLVMGlobalISel LLVMSelectionDAG LLVMScalarOpts LLVMInstCombine LLVMAggressiveInstCombine
 RUN cd llvm-release80-debug && ninja LLVMAsmPrinter LLVMCodeGen LLVMMCDisassembler LLVMBitWriter LLVMBinaryFormat
 RUN cd llvm-release80-debug && ninja LLVMX86AsmPrinter LLVMX86CodeGen LLVMX86Disassembler LLVMX86AsmParser LLVMX86Desc LLVMX86Info LLVMX86Utils
+RUN cd llvm-release80-debug && ninja LLVMipo LLVMInstrumentation LLVMVectorize LLVMLinker LLVMIRReader LLVMAsmParser
 
 # Checkout JitFromScratch
 RUN git clone https://github.com/weliveindetail/JitFromScratch.git jitfromscratch && \
