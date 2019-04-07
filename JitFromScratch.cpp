@@ -1,4 +1,5 @@
 #include "JitFromScratch.h"
+#include "SimpleOptimizer.h"
 
 #include <llvm/ExecutionEngine/Orc/CompileUtils.h>
 #include <llvm/ExecutionEngine/Orc/ExecutionUtils.h>
@@ -10,51 +11,6 @@
 #include <llvm/Transforms/IPO/PassManagerBuilder.h>
 
 #define DEBUG_TYPE "jitfromscratch"
-
-namespace {
-
-  // A SimpleCompiler that owns its TargetMachine.
-  class TMOwningSimpleCompiler : public llvm::orc::SimpleCompiler {
-  public:
-    TMOwningSimpleCompiler(std::unique_ptr<llvm::TargetMachine> TM)
-      : llvm::orc::SimpleCompiler(*TM), TM(std::move(TM)) {}
-  private:
-    // FIXME: shared because std::functions (and thus
-    // IRCompileLayer::CompileFunction) are not moveable.
-    std::shared_ptr<llvm::TargetMachine> TM;
-  };
-
-  class OptFtor {
-  public:
-    OptFtor(unsigned OptLevel) { B.OptLevel = OptLevel; }
-
-    llvm::Expected<llvm::orc::ThreadSafeModule>
-    operator()(llvm::orc::ThreadSafeModule TSM,
-              const llvm::orc::MaterializationResponsibility &) {
-      llvm::Module &M = *TSM.getModule();
-
-      llvm::legacy::FunctionPassManager FPM(&M);
-      B.populateFunctionPassManager(FPM);
-
-      FPM.doInitialization();
-      for (llvm::Function &F : M)
-        FPM.run(F);
-      FPM.doFinalization();
-
-      llvm::legacy::PassManager MPM;
-      B.populateModulePassManager(MPM);
-      MPM.run(M);
-
-      LLVM_DEBUG(llvm::dbgs() << "Optimized IR module:\n\n" << M << "\n\n");
-
-      return TSM;
-    }
-
-  private:
-    llvm::PassManagerBuilder B;
-  };
-
-} // end anonymous namespace
 
 using namespace llvm;
 using namespace llvm::orc;
@@ -128,7 +84,7 @@ Error JitFromScratch::submitModule(std::unique_ptr<Module> M,
   if (auto Err = applyDataLayout(*M))
     return Err;
 
-  OptimizeLayer.setTransform(OptFtor(OptLevel));
+  OptimizeLayer.setTransform(SimpleOptimizer(OptLevel));
 
   return OptimizeLayer.add(ES->getMainJITDylib(),
                            ThreadSafeModule(std::move(M), std::move(C)),

@@ -62,6 +62,7 @@ endif()
 add_executable(JitFromScratch
   main.cpp
   JitFromScratch.cpp
+  SimpleOptimizer.cpp
 )
 
 target_include_directories(JitFromScratch PRIVATE

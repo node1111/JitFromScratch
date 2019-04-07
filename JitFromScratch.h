@@ -45,9 +45,9 @@ private:
   std::unique_ptr<llvm::orc::ExecutionSession> ES;
   std::unique_ptr<llvm::TargetMachine> TM;
 
-  llvm::orc::IRTransformLayer OptimizeLayer;
-  llvm::orc::IRCompileLayer CompileLayer;
   llvm::orc::RTDyldObjectLinkingLayer ObjLinkingLayer;
+  llvm::orc::IRCompileLayer CompileLayer;
+  llvm::orc::IRTransformLayer OptimizeLayer;
 
   llvm::orc::JITDylib::GeneratorFunction createHostProcessResolver();
 

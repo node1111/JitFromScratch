@@ -38,7 +38,8 @@ Expected<unsigned> getOptLevel() {
     case '3': return 3;
     default:
       return createStringError(inconvertibleErrorCode(),
-                               "Invalid optimization level: -O%s", OptLevel);
+                               "Invalid optimization level: -O%c",
+                               (char)OptLevel);
   }
 }
 
