@@ -28,5 +28,5 @@ SimpleOptimizer::operator()(ThreadSafeModule TSM,
 
   LLVM_DEBUG(dbgs() << "Optimized IR module:\n\n" << M << "\n\n");
 
-  return TSM;
+  return std::move(TSM);
 }
