@@ -7,6 +7,5 @@
 # CHECK-EMPTY:
 # CHECK-NEXT: ; ModuleID = 'JitFromScratch'
 # CHECK-NEXT: source_filename = "JitFromScratch"
-# CHECK-NEXT: target datalayout = {{.*}}
 
 # CHECK: Integer Distances: 3, 0, 3
