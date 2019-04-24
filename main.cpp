@@ -34,6 +34,7 @@ static cl::opt<std::string>
         cl::value_desc("directory"), cl::init(""));
 
 Expected<unsigned> getOptLevel() {
+	
   switch (OptLevel) {
     case '0': return 0;
     case '1': return 1;
@@ -48,6 +49,7 @@ Expected<unsigned> getOptLevel() {
 }
 
 Expected<std::string> codegenIR(Module &module, unsigned items) {
+  
   LLVMContext &ctx = module.getContext();
   IRBuilder<> B(ctx);
 
@@ -70,18 +72,19 @@ Expected<std::string> codegenIR(Module &module, unsigned items) {
     Value *absFunction = module.getOrInsertFunction("abs", absSig);
 
     auto allocSig = FunctionType::get(intPtrTy, {intTy}, false);
-    Value *allocFunction =
-        module.getOrInsertFunction("customIntAllocator", allocSig);
+    Value *allocFunction = module.getOrInsertFunction("customIntAllocator", allocSig);
 
     Value *rs_count = ConstantInt::get(intTy, items);
     Value *rs_ptr = B.CreateCall(allocFunction, {rs_count}, "rs_ptr");
 
     for (unsigned int i = 0; i < items; i++) {
+		
       Value *xi_ptr = B.CreateConstInBoundsGEP1_32(intTy, argX, i, "x_ptr");
       Value *yi_ptr = B.CreateConstInBoundsGEP1_32(intTy, argY, i, "y_ptr");
 
       Value *xi = B.CreateLoad(xi_ptr, "x");
       Value *yi = B.CreateLoad(yi_ptr, "y");
+	  
       Value *difference = B.CreateSub(xi, yi, "diff");
       Value *absDifference = B.CreateCall(absFunction, {difference}, "dist");
 
@@ -116,6 +119,7 @@ constexpr unsigned arrayElements(T (&)[sizeOfArray]) {
 
 // This function will be called from JITed code.
 extern "C" int *customIntAllocator(unsigned items) {
+	
   static int memory[100];
   static unsigned allocIdx = 0;
 
@@ -132,6 +136,7 @@ extern "C" int *customIntAllocator(unsigned items) {
 extern "C" int abs(int);
 
 int main(int argc, char **argv) {
+	
   InitLLVM X(argc, argv);
 
   ExitOnError ExitOnErr;
@@ -141,13 +146,13 @@ int main(int argc, char **argv) {
   InitializeNativeTargetAsmPrinter();
   InitializeNativeTargetAsmParser();
 
+  std::unique_ptr<TargetMachine> TM(EngineBuilder().selectTarget());
+	
   // Parse implicit -debug and -debug-only options.
   cl::ParseCommandLineOptions(argc, argv, "JitFromScratch example project\n");
 
   int x[]{0, 1, 2};
   int y[]{3, 1, -1};
-
-  std::unique_ptr<TargetMachine> TM(EngineBuilder().selectTarget());
 
   LLVM_DEBUG(dbgs() << "JITing for host target: "
                     << TM->getTargetTriple().normalize() << "\n\n");
@@ -163,8 +168,7 @@ int main(int argc, char **argv) {
   ExitOnErr(Jit.submitModule(std::move(M), std::move(C), OptLevel, AddToCache));
 
   // Request function; this compiles to machine code and links.
-  auto integerDistances =
-      ExitOnErr(Jit.getFunction<int *(int *, int *)>(JitedFnName));
+  auto integerDistances = ExitOnErr(Jit.getFunction<int *(int *, int *)>(JitedFnName));
 
   int *z = integerDistances(x, y);
 
